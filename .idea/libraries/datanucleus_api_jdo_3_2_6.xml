@@ -1,0 +1,18 @@
+<component name="libraryTable">
+  <library name="datanucleus-api-jdo-3.2.6">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/datanucleus-api-jdo-3.2.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/datanucleus-core-3.2.10.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/datanucleus-rdbms-3.2.9.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/scalacheck_2.10-1.12.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/scalatest_2.10-2.2.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/spark-1.2.0.2.2.0.0-82-yarn-shuffle.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/spark-assembly-1.2.0.2.2.0.0-82-hadoop2.6.0.2.2.0.0-2041.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/spark-testing-base_2.10-0.1.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/lib/spark-assembly-1.2.0.2.2.0.0-82-hadoop2.6.0.2.2.0.0-2041.jar!/" />
+    </SOURCES>
+  </library>
+</component>
