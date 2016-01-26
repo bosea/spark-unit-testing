@@ -120,6 +120,21 @@ class EuclideanVectorSpaceTests extends FunSuite with BeforeAndAfter {
   test("L2 distance between 2 Vector's") {
       assert(EuclideanVectorSpace.distance(x, y) === 2.0)
   }
+  
+  test("Cosine between 2 Vector's") {
+    // expected value = 40.0 / (sqrt(54) * sqrt(30))
+    assert(EuclideanVectorSpace.cosine(x, y) === 40.0 / (sqrt(54) * sqrt(30)))
+  }
+
+  test("Vectors of 0's will have a zero distance") {
+    assertResult(0.0) {
+      EuclideanVectorSpace.distance(Vectors.dense(0.0, 0.0, 0.0), Vectors.dense(0.0, 0.0, 0.0))
+    }
+  }
+  
+  // 4. Use "pending" to write tests later.
+  test ("Centroid of a set of vectors") (pending)
+
 }
 ```
 
@@ -127,12 +142,16 @@ class EuclideanVectorSpaceTests extends FunSuite with BeforeAndAfter {
 2. Initialize x and y before each test
 3. Write the actual test. It uses "assert" to enforce whether the expected value (right hand side) 
    is same as the value returned by "distance" method in EuclideanVectorSpace. Note the "===" 
-   (three = signs) in the assert statement.  
+   (three "=" signs) in the assert statement. This syntax provides more detailed error messages.
+   I prefer to use this for all my tests.
+4. Note the "pending" next to the last test with an empty body. This tells ScalaTest (and reminds us)
+   that we will be writing future tests. For example, we have the method centroid defined in
+   EuclideanVectorSpace but we are not testing it yet. (It is always a good idea to write all the tests
+   in one go though...I may not come back to this again...)
+
+### Making life easier with Spark-Testing-Base
 
 
-  defined with its name and a body. A typical of many tests is the assert statement. We will see 
-  an example of that later. Finally, an "after" section is defined for all post-test operations. 
-  Again, it is executed each time following a test. So, the code block looks like:
 
 
 
