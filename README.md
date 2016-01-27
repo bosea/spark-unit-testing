@@ -240,13 +240,13 @@ class DistanceFromCentroidTests extends FunSuite with BeforeAndAfter with Shared
    }
    ```
  
-  1.1 sc is the SparkContext that you will use for your tests within the same suite. Internally, the trait uses a private 
+  - 1.1 sc is the SparkContext that you will use for your tests within the same suite. Internally, the trait uses a private 
       variable "_sc" to manage the actual Spark Context so that you cannot (accidentally) modify it. 
-  1.2 "_sc" is instantiated within a "beforeAll()" method. The difference between "before()" that you have seen before and
+  - 1.2 "_sc" is instantiated within a "beforeAll()" method. The difference between "before()" that you have seen before and
       "beforeAll()" is that the latter is executed before executing the suite (difference here before the suite vs before a test in 
        the suite).  You can also have nested suites - slightly more advanced but a very handy approach when testing a large platform.
        You can read more about beforeAll and afterAll here: http://doc.scalatest.org/1.0/org/scalatest/BeforeAndAfterAll.html
-  1.3 Similarly, Spark Context is stopped at the end of the test suite via a call to afterAll().
+  - 1.3 Similarly, Spark Context is stopped at the end of the test suite via a call to afterAll().
   
   
 # References
