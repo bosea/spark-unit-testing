@@ -152,7 +152,7 @@ class EuclideanVectorSpaceTests extends FunSuite with BeforeAndAfter {
 ### Making life easier with Spark-Testing-Base
 
 As I mentioned earlier, after trying a few different things, I find spark-testing-base to be the 
-easiest and most functional unit teting framework for Spark so far. It surfaces some of the same test suites that the Spark
+easiest and most functional unit testing framework for Spark so far. It surfaces some of the same test suites that the Spark
 committers use when testing internal Spark code. What you get out of the box:
 
 1. There are often multiple tests in a test suite, and we use "before" and "after" to set up and reset the 
@@ -170,6 +170,7 @@ committers use when testing internal Spark code. What you get out of the box:
 
 Now let's look at a concrete example. 
 **src/test/scala/ml/dolphin/testing/DistanceFromCentroidTests.scala**
+
 ```
 class DistanceFromCentroidTests extends FunSuite with BeforeAndAfter with SharedSparkContext {
 
@@ -204,6 +205,7 @@ class DistanceFromCentroidTests extends FunSuite with BeforeAndAfter with Shared
    To see how it's handled, take a look at the internal of spark-testing-base, specifically [**SharedSparkContext.scala**](https://github.com/holdenk/spark-testing-base/blob/ef199dc9e93cc80376d7289f7504824d0ffa0870/src/main/1.3/scala/com/holdenkarau/spark/testing/SharedSparkContext.scala)
    
    ```
+   
    /** Shares a local `SparkContext` between all tests in a suite and closes it at the end. */
    trait SharedSparkContext extends BeforeAndAfterAll with SparkContextProvider {
      self: Suite =>
