@@ -247,8 +247,29 @@ class DistanceFromCentroidTests extends FunSuite with BeforeAndAfter with Shared
        the suite).  You can also have nested suites - slightly more advanced but a very handy approach when testing a large platform.
        You can read more about beforeAll and afterAll here: http://doc.scalatest.org/1.0/org/scalatest/BeforeAndAfterAll.html
   - 1.3 Similarly, Spark Context is stopped at the end of the test suite via a call to afterAll().
-  
-  
+ 
+2. Coming back to our test suite: DistanceFromCentroidTests, let's look at the actual test:
+    ```
+    // 2. an actual test
+    test("Testing calcDistance using a shared Spark Context") {
+      val sum = DistanceFromCentroid.calcDistance(sc, vPointsRdd, centroid)
+      val expected = sqrt(14.0) + sqrt(30.0) + sqrt(104.0) + sqrt(90.0)
+      assert(sum === expected)
+    }
+    ```
+   This is very similar to regular ScalaTest syntax. The only difference is that we are invoking a test on a RDD using the local
+   shared SparkContext supplied to us by spark-testing-base. We are testing DistanceFromCentroid.calcDistance(...) method that
+   takes a RDD of points, a centroid and calculates the sum of inidividual distances from the centroid. Notice how we expressed
+   the expected value. Since there were 4 points defined in vPointsRdd, we put in sqrt(each point's distance from centroid) for
+   each point. This is just an individual choice - it helps with code readability by another person as to how the expected value is
+   calculated.
+ 
+That's it. Happy testing!
+
+## Spark Performance Testing with spark-perf
+Coming
+
+ 
 # References
 
 Spark testing:
