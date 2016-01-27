@@ -7,8 +7,8 @@ import org.scalatest.FunSuite
  * Example usage of spark-testing-base library written by Holden Karau
  *
  * @author Abhijit Bose
- * @version 1.0 06/24/2015
- * @since 1.0 06/24/2015
+ * @version 1.0 11/24/2015
+ * @since 1.0 11/24/2015
  */
 
 class SampleRddTest extends FunSuite with SharedSparkContext {
