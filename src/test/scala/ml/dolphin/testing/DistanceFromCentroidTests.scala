@@ -11,8 +11,8 @@ import org.apache.spark.mllib.linalg.{Vector, Vectors}
  * Unit tests for ml.dolphin.testing.DistanceFromCentroid methods
  *
  * @author Abhijit Bose
- * @version 1.0 06/24/2015
- * @since 1.0 06/24/2015
+ * @version 1.0 11/24/2015
+ * @since 1.0 11/24/2015
  */
 
 class DistanceFromCentroidTests extends FunSuite with BeforeAndAfter with  SharedSparkContext {
