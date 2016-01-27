@@ -151,11 +151,104 @@ class EuclideanVectorSpaceTests extends FunSuite with BeforeAndAfter {
 
 ### Making life easier with Spark-Testing-Base
 
+As I mentioned earlier, after trying a few different things, I find spark-testing-base to be the 
+easiest and most functional unit teting framework for Spark so far. It surfaces some of the same test suites that the Spark
+committers use when testing internal Spark code. What you get out of the box:
 
+1. There are often multiple tests in a test suite, and we use "before" and "after" to set up and reset the 
+   test artifacts. That is fine for regular Scala code. When you are trying to do this for Spark code, each test needs to 
+   set up and stop a [SparkContext](http://spark.apache.org/docs/latest/api/scala/index.html#org.apache.spark.SparkContext),
+   leading to a lot of boilerplate code replication. Also, in between SparkContext stops and starts, one has to clear
+   spark.driver.port variable. When you use spart-testing-base, this is automatically taken care of so you can focus on
+   writing the test iteself (i.e. the stuff in the "test(<name>) {}"). If you are writing lots of tests, this makes a 
+   big difference. More specifically, spark-testing-base allows you to share the same SparkContext for all the tests defined 
+   in the same test suite. We dig deeper into this below.
+2. If you are testing Spark Streaming or Spark DataFrames (i.e. not just basic RDD methods), there are other things to 
+   worry about, e.g. how long you have to wait for the test to finish. I will be adding more examples on these, especially
+   DataFrames since there is not much info on testing currently. For now, you can read [**this excellent article**](http://blog.cloudera.com/blog/2015/09/making-apache-spark-testing-easy-with-spark-testing-base/) by creator
+   of spark-testing-base (Holden Karau).
 
+Now let's look at a concrete example. 
+**src/test/scala/ml/dolphin/testing/DistanceFromCentroidTests.scala**
+```
+class DistanceFromCentroidTests extends FunSuite with BeforeAndAfter with SharedSparkContext {
 
+  var vPoints: Array[Vector] = _
+  var centroid: Vector = _
+  var vPointsRdd: RDD[Vector] = _
 
+  // 1. Instantiate the variables for each test
+  before {
+    vPoints = Array(Vectors.dense(1.0, 2.0, 3.0, 4.0), Vectors.dense(2.0, 3.0, 4.0, 5.0),
+    Vectors.dense(3.0, 9.0, 1.0, 7.0), Vectors.dense(1.0, 5.0, 6.0, 8.0))
+    centroid = Vectors.dense(1.0, 1.0, 1.0, 1.0)
+    vPointsRdd = sc.parallelize(vPoints, 3)
+  }
+  
+  // 2. an actual test
+  test("Testing calcDistance using a shared Spark Context") {
+    val sum = DistanceFromCentroid.calcDistance(sc, vPointsRdd, centroid)
+    val expected = sqrt(14.0) + sqrt(30.0) + sqrt(104.0) + sqrt(90.0)
+    assert(sum === expected)
+  }
+}
+```
 
+1. Note something special here. We are using a SparkContext ("sc") without instantiating it anywhere in this class:
+   ```
+   vPointsRdd = sc.parallelize(vPoints, 3) 
+   ```
+   This is done for you within spark-testing-base when you extend your class definition with "SharedSparkContext" trait 
+   (you need to import "com.holdenkarau.spark.testing.SharedSparkContext" in the file where you define your test suite). 
+   
+   To see how it's handled, take a look at the internal of spark-testing-base, specifically [**SharedSparkContext.scala**](https://github.com/holdenk/spark-testing-base/blob/ef199dc9e93cc80376d7289f7504824d0ffa0870/src/main/1.3/scala/com/holdenkarau/spark/testing/SharedSparkContext.scala)
+   
+   ```
+   /** Shares a local `SparkContext` between all tests in a suite and closes it at the end. */
+   trait SharedSparkContext extends BeforeAndAfterAll with SparkContextProvider {
+     self: Suite =>
+
+     @transient private var _sc: SparkContext = _
+     
+     // 1.1. SparkContext definition
+     override def sc: SparkContext = _sc
+
+     val appID = new Date().toString + math.floor(math.random * 10E4).toLong.toString
+
+     override val conf = new SparkConf().
+       setMaster("local[*]").
+       setAppName("test").
+       set("spark.ui.enabled", "false").
+       set("spark.app.id", appID)
+
+     // 1.2. Instantiate new SparkContext and set logging level
+     override def beforeAll() {
+       _sc = new SparkContext(conf)
+       _sc.setLogLevel(org.apache.log4j.Level.WARN.toString)
+       super.beforeAll()
+     }
+     
+     // 1.3. stop SparkContext
+     override def afterAll() {
+       try {
+         LocalSparkContext.stop(_sc)
+         _sc = null
+       } finally {
+         super.afterAll()
+       }
+     }
+   }
+   ```
+ 
+  1.1 sc is the SparkContext that you will use for your tests within the same suite. Internally, the trait uses a private 
+      variable "_sc" to manage the actual Spark Context so that you cannot (accidentally) modify it. 
+  1.2 "_sc" is instantiated within a "beforeAll()" method. The difference between "before()" that you have seen before and
+      "beforeAll()" is that the latter is executed before executing the suite (difference here before the suite vs before a test in 
+       the suite).  You can also have nested suites - slightly more advanced but a very handy approach when testing a large platform.
+       You can read more about beforeAll and afterAll here: http://doc.scalatest.org/1.0/org/scalatest/BeforeAndAfterAll.html
+  1.3 Similarly, Spark Context is stopped at the end of the test suite via a call to afterAll().
+  
+  
 # References
 
 Spark testing:
