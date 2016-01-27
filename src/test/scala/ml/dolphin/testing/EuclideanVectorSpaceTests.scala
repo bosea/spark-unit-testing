@@ -29,7 +29,6 @@ class EuclideanVectorSpaceTests extends FunSuite with BeforeAndAfter {
 
   test("Cosine between 2 Vector's")   {
     // expected value = 40.0 / (sqrt(54) * sqrt(30))
-    org.scalatest.Assertions.assert(1 == 2)
     assert(EuclideanVectorSpace.cosine(x, y) === 40.0 / (sqrt(54) * sqrt(30)))
   }
 
